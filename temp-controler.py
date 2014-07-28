@@ -1,6 +1,8 @@
 import os
 import glob
 import time
+import RPi.GPIO as io # load RPi.GPIO
+io.setmode(io.BCM) # for io
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -8,6 +10,12 @@ os.system('modprobe w1-therm')
 base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0]
 device_file = device_folder + '/w1_slave'
+
+power_pin = 23 # power to relay
+temp_set = 70.0 # the target temperature
+
+io.setup(power_pin, io.OUT) 
+io.setup(power_pin, False)
 
 def read_temp_raw():
     f = open(device_file, 'r')
@@ -28,6 +36,15 @@ def read_temp():
         return temp_c, temp_f
 	
 while True:
-	print(read_temp())	
-	time.sleep(1)
+    if temp_c < temp_set:
+	    print("POWER ON")
+	    io.output(power_pin, True)
+	    print(read_temp())
+	    time.sleep(3)
+
+    else
+    print("POWER OFF")
+    io.output(power_pin, False)
+    print(read_temp())	
+    time.sleep(3)
 
