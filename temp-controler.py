@@ -11,7 +11,7 @@ base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0]
 device_file = device_folder + '/w1_slave'
 
-power_pin = 24 # power to relay
+power_pin = 20 # power to relay
 temp_set = 70.0 # the target temperature
 
 io.setup(power_pin, io.OUT) 
@@ -33,7 +33,7 @@ def read_temp():
         temp_string = lines[1][equals_pos+2:]
         temp_c = float(temp_string) / 1000.0
         temp_f = temp_c * 9.0 / 5.0 + 32.0
-        return temp_c, temp_f
+        return temp_c #, temp_f
 	
 while True:
     if read_temp() < temp_set:
@@ -46,4 +46,3 @@ while True:
     io.output(power_pin, False)
     print(read_temp())	
     time.sleep(3)
-
